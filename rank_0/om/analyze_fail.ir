@@ -1,0 +1,86 @@
+# 1.This file shows the parsed IR info when graph evaluating failed to help find the problem.
+# 2.You can search the last `------------------------>` to the node which is inferred failed.
+# 3.Refer to https://www.mindspore.cn/search?inputValue=analyze_fail.ir to get more instructions.
+# ===============================================================================
+
+subgraph attr:
+subgraph instance: construct.Default.84 : 000001AD86E83B50
+# In file c:\Users\pang\mambaforge-pypy3\envs\pang\lib\site-packages\mindspore\nn\loss\loss.py:313/    def construct(self, logits, labels):/
+subgraph @construct.Default.84(%para1_logits, %para2_labels) {
+  %1([CNode]86) = S-Prim-_check_is_tensor[constexpr_prim=Bool(1)]("logits", %para1_logits, "MSELoss")
+      : (<String, NoShape>, <Tensor[Float32], (205, 5)>, <String, NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+      # In file c:\Users\pang\mambaforge-pypy3\envs\pang\lib\site-packages\mindspore\nn\loss\loss.py:314/        _check_is_tensor('logits', logits, self.cls_name)/
+  %2([CNode]87) = S-Prim-_check_is_tensor[constexpr_prim=Bool(1)]("labels", %para2_labels, "MSELoss")
+      : (<String, NoShape>, <Tensor[Float32], (205, 24)>, <String, NoShape>) -> (<None, NoShape>)
+      #scope: (Default)
+      # In file c:\Users\pang\mambaforge-pypy3\envs\pang\lib\site-packages\mindspore\nn\loss\loss.py:315/        _check_is_tensor('labels', labels, self.cls_name)/
+  %3([CNode]88) = MakeTuple[is_dynamic_len=Bool(0)](%1, %2)
+      : (<None, NoShape>, <None, NoShape>) -> (<Tuple[None*2], TupleShape(NoShape, NoShape)>)
+      #scope: (Default)
+  %4([CNode]89) = StopGradient(%3)
+      : (<Tuple[None*2], TupleShape(NoShape, NoShape)>) -> (<Tuple[None*2], TupleShape(NoShape, NoShape)>)
+      #scope: (Default)
+
+#------------------------> 0
+  %5([CNode]90) = S-Prim-sub(%para1_logits, %para2_labels)
+      : (<Tensor[Float32], (205, 5)>, <Tensor[Float32], (205, 24)>) -> (<null>)
+      #scope: (Default)
+      # In file c:\Users\pang\mambaforge-pypy3\envs\pang\lib\site-packages\mindspore\nn\loss\loss.py:316/        x = F.square(logits - labels)/
+  %6(x) = call @square.91(%5)
+      : (<null>) -> (<null>)
+      #scope: (Default)
+      # In file c:\Users\pang\mambaforge-pypy3\envs\pang\lib\site-packages\mindspore\nn\loss\loss.py:316/        x = F.square(logits - labels)/
+  %7([CNode]93) = call @get_loss.92(%6)
+      : (<null>) -> (<null>)
+      #scope: (Default)
+      # In file c:\Users\pang\mambaforge-pypy3\envs\pang\lib\site-packages\mindspore\nn\loss\loss.py:317/        return self.get_loss(x)/
+  %8([CNode]94) = Depend[side_effect_propagate=I64(1)](%7, %4)
+      : (<null>, <Tuple[None*2], TupleShape(NoShape, NoShape)>) -> (<null>)
+      #scope: (Default)
+  Return(%8)
+      : (<null>)
+      #scope: (Default)
+      # In file c:\Users\pang\mambaforge-pypy3\envs\pang\lib\site-packages\mindspore\nn\loss\loss.py:317/        return self.get_loss(x)/
+}
+# order:
+#   1: @construct.Default.84:[CNode]86{[0]: ValueNode<DoSignaturePrimitive> S-Prim-_check_is_tensor, [1]: ValueNode<StringImm> logits, [2]: logits, [3]: ValueNode<StringImm> MSELoss}
+#   2: @construct.Default.84:[CNode]87{[0]: ValueNode<DoSignaturePrimitive> S-Prim-_check_is_tensor, [1]: ValueNode<StringImm> labels, [2]: labels, [3]: ValueNode<StringImm> MSELoss}
+#   3: @construct.Default.84:[CNode]90{[0]: ValueNode<DoSignaturePrimitive> S-Prim-sub, [1]: logits, [2]: labels}
+#   4: @construct.Default.84:x{[0]: ValueNode<FuncGraph> square.91, [1]: [CNode]90}
+#   5: @construct.Default.84:[CNode]93{[0]: ValueNode<FuncGraph> get_loss.92, [1]: x}
+#   6: @construct.Default.84:[CNode]95{[0]: ValueNode<Primitive> Return, [1]: [CNode]94}
+
+
+subgraph attr:
+subgraph instance: _sub_tensor.85 : 000001AD86E885B0
+# In file c:\Users\pang\mambaforge-pypy3\envs\pang\lib\site-packages\mindspore\ops\composite\multitype_ops\sub_impl.py:39/def _sub_tensor(x, y):/
+subgraph @_sub_tensor.85(%para3_x, %para4_y) {
+  %1([CNode]90) = resolve(SymbolStr, F)
+      : (<External, NoShape>, <External, NoShape>) -> (<External, NoShape>)
+      #scope: (Default)
+      # In file c:\Users\pang\mambaforge-pypy3\envs\pang\lib\site-packages\mindspore\nn\loss\loss.py:316/        x = F.square(logits - labels)/
+  %2([CNode]90) = getattr(%1, "tensor_sub")
+      : (<External, NoShape>, <String, NoShape>) -> (<Func, NoShape>)
+      #scope: (Default)
+      # In file c:\Users\pang\mambaforge-pypy3\envs\pang\lib\site-packages\mindspore\nn\loss\loss.py:316/        x = F.square(logits - labels)/
+
+#------------------------> 1
+  %3([CNode]90) = %2(%para3_x, %para4_y)
+      : (<Tensor[Float32], (205, 5)>, <Tensor[Float32], (205, 24)>) -> (<null>)
+      #scope: (Default)
+      # In file c:\Users\pang\mambaforge-pypy3\envs\pang\lib\site-packages\mindspore\nn\loss\loss.py:316/        x = F.square(logits - labels)/
+  Return(%3)
+      : (<null>)
+      #scope: (Default)
+      # In file c:\Users\pang\mambaforge-pypy3\envs\pang\lib\site-packages\mindspore\nn\loss\loss.py:316/        x = F.square(logits - labels)/
+}
+# order:
+#   1: @_sub_tensor.96:[CNode]97{[0]: ValueNode<Primitive> resolve, [1]: ValueNode<NameSpace> CommonOPS: 'Namespace:mindspore._extends.parse.trope', [2]: ValueNode<Symbol> MakeTuple}
+#   2: @_sub_tensor.96:[CNode]98{[0]: [CNode]97, [1]: x, [2]: y}
+#   3: @_sub_tensor.85:[CNode]90{[0]: [CNode]90, [1]: x, [2]: y}
+#   4: @_sub_tensor.85:[CNode]90{[0]: ValueNode<Primitive> Return, [1]: [CNode]90}
+
+
+#===============================================================================
+# num of function graphs in stack: 2/4 (Ignored 2 internal frames).
